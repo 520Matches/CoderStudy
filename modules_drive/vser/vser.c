@@ -8,6 +8,7 @@
 
 #include <linux/ioctl.h>
 #include <linux/uaccess.h>
+#include <uapi/linux/uio.h>
 
 #include "vser.h"
 
@@ -50,6 +51,44 @@ static ssize_t vser_write(struct file *filp, const char __user *buf, size_t coun
 	kfifo_from_user(&vsfifo,buf,count,&copied);
 	return copied;
 }
+//
+// static ssize_t vser_aio_read(struct kiocb *iocb, const struct iovec *iov,unsigned long nr_segs, loff_t pos)
+// {
+	// size_t read = 0 ;
+	// unsigned long i ;
+	// ssize_t ret     ;
+//
+	// for(i=0;i<nr_segs;i++)
+	// {
+		// ret = vser_read(iocb->ki_filp,iov[i].iov_base,iov[i].iov_len,&pos);
+		// if(ret < 0)
+		// {
+			// break;
+		// }
+		// read += ret;
+	// }
+//
+	// return read ? read : -EFAULT;
+// }
+//
+// static ssize_t vser_aio_write(struct kiocb *iocb,const struct iovec *iov,unsigned long nr_segs,loff_t pos)
+// {
+	// size_t written = 0 ;
+	// unsigned long i    ;
+	// ssize_t ret        ;
+//
+	// for(i = 0;i<nr_segs;i++)
+	// {
+		// ret = vser_write(iocb->ki_filp,iov[i].iov_base,iov[i].iov_len,&pos);
+		// if(ret < 0)
+		// {
+			// break;
+		// }
+		// written += ret;
+	// }
+//
+	// return written ? written : -EFAULT;
+// }
 
 static long vser_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
@@ -84,12 +123,14 @@ static long vser_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 }
 
 static struct file_operations vser_ops = {
-	.owner   = THIS_MODULE,
-	.open    = vser_open,
-	.release = vser_release,
-	.read    = vser_read,
-	.write   = vser_write,
-	.unlocked_ioctl = vser_ioctl,
+	.owner          = THIS_MODULE    ,
+	.open           = vser_open      ,
+	.release        = vser_release   ,
+	.read           = vser_read      ,
+	.write          = vser_write     ,
+	.unlocked_ioctl = vser_ioctl     ,
+	// .aio_read       = vser_aio_read  ,
+	// .aio_write      = vser_aio_write ,
 };
 
 static int __init vser_init(void)
@@ -108,9 +149,9 @@ static int __init vser_init(void)
 	cdev_init(&vsdev.cdev,&vser_ops);
 
 	vsdev.cdev.owner = THIS_MODULE;
-	vsdev.opt.datab = 8;
+	vsdev.opt.datab  = 8;
 	vsdev.opt.parity = 0;
-	vsdev.opt.stopb = 1;
+	vsdev.opt.stopb  = 1;
 	
 	ret = cdev_add(&vsdev.cdev,dev,VSER_DEV_CNT);
 	if(ret)

@@ -15,6 +15,5 @@ clean:
 	rm -rf modules.order Module.symvers *.mod.* *.mod *.o .*.*.* 
 
 # else
-obj-m := vser.o
-# vser-objs = foo.o bar.o
+obj-m := vfb.o
 # endif
