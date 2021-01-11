@@ -7,6 +7,12 @@
 > readelf -h abc
 - size命令可以查看二进制文件的内存分布结构，（代码段，数据段，bss等等）
 > size abc
+- head命令和cat命令的区别
+> head是显示文件的头几行,cat是显示全部
+- xxd：以16进制形式读取二进制文件
+> xxd aaa
+- dd命令：读取文件的工具
+> dd skip=52 count=64 if=aaa of=out_aaa bs=1;skip是从哪个位置开始读取，count是要读取的数据的长度，if是输入文件，of是输出文件，bs是读取的单位（1表示一个字节）
 - nm命令：需要查看相关符号表来知道各个标签的意思
 - strip命令用来剔除可执行文件中的符号表
 - strings命令用来查看可执行文件中的常量字符串
