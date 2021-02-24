@@ -47,3 +47,8 @@ IRQ模式下，中断处理程序需要自己保存R8到R12这几个额寄存器
     由于ARM用户模式下对资源的访问受限，因此、可以达到保护Linux操作系统内核的目的。
     需要强调的是：Linux内核态是从ARM的SVC即管理模式下启动的，但在某些情况下、如：硬件中断、程序异常（被动）等情况下进入ARM的其他特权模式，这时仍然可以进入内核态（因为就是可以操作内核了）；同样，Linux用户态是从ARM用户模式启动的，但当进入ARM系统模式时、仍然可以操作Linux用户态程序（进入用户态，如init进程的启动过程）。
     即：Linux内核从ARM的SVC模式下启动，但内核态不仅仅指ARM的SVC模式（还包括可以访问内核空间的所有ARM模式）；Linux用户程序从ARM的用户模式启动，但用户态不仅仅指ARM的用户模式
+
+### 专业名词
+- CCM    : Clock Controller Module(时钟控制模块)
+- IOMUXC : IOMUXC Controller(IO复用控制器)
+- GPIO   : General-purpose input/output(通用输入输出口)
