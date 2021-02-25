@@ -52,3 +52,18 @@ IRQ模式下，中断处理程序需要自己保存R8到R12这几个额寄存器
 - CCM    : Clock Controller Module(时钟控制模块)
 - IOMUXC : IOMUXC Controller(IO复用控制器)
 - GPIO   : General-purpose input/output(通用输入输出口)
+
+### GPIO
+- 通过CCM去使能引脚
+- 通过IOMUXC去设置引脚为GPIO模式
+
+### RISC & CISC
+- CISC:(Complex Instruction SetComputer)复杂指令集
+- RISC:(Reduced Instructiion Set Computer)精简指令集
+> CISC的指令能力强，但多数指令使用率低，增加了CPU的复杂度，指令是可变长格式。
+> RISC的指令大部分为单周期指令，指令长度固定，操作寄存器，对于内存只有Load/Store操作
+> CISC支持多种寻址方式
+> CISC通过微控制技术实现
+> RISC增加了通用寄存器，硬布线逻辑控制为主，采用流水线
+> CISC的研制周期长
+> RISC优化编译，有效支持高级语言
