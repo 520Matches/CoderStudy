@@ -1,8 +1,8 @@
 # ARM笔记
 
 ## CPU工作状态
-- ARM状态
-- THumb状态
+- ARM状态(32位的指令)
+- THumb状态(16位的指令，节省空间)
 
 ### 模式
 - 用户模式(USR):正常程序执行模式,不能直接切换到其他模式
@@ -14,8 +14,30 @@
 - 未定义模式(UND):支持硬件协处理器软件仿真，未定义指令异常响应时进入此模式
 
 ### 寄存器
+- Cortex-A7的寄存器图片
 ![](./register.png)
+- R13:SP(Stack Pointerl)栈指针
+> SP寄存器有值就是满栈（先调整SP，再存放数据），SP寄存器没有值就是空栈（先存放数据，再调整SP）
+- R14:LR(Link Register)用来保存返回地址
 - 寄存器R15被用作程序计数器，也称为PC，其值等于当前正在执行指令的地址+8（因为在取址和执行之间多了一个译码阶段）
+- PSR:(Program strtus Register)程序状态寄存器
+
+- 对于cortex-M3/M4来说xPSR对应3个寄存器
+> APSR:Application PSR,应用PSR
+> IPSR:Interrupt PSR,中断PSR
+> EPSR:Exectution PSR,执行PSR
+> 这3个寄存器可以单独访问:
+| 指令        | 解析   |
+| ---         | ---    |
+| MRS R0,APSR | 读APSR |
+| MRS R0,IPSR | 读IPSR |
+| MSR APSR,R0 | 写APSR |
+> 这3个寄存器也可以一次性访问:
+| 指令       | 解析   |
+| ---        | ---    |
+| MRS R0,PSR | 读组合状态寄存器 |
+| MSR PSR,R0 | 写组合状态寄存器 |
+
 
 ### 寻址方式
 - 立即数寻址
