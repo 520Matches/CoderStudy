@@ -38,7 +38,6 @@
 | MRS R0,PSR | 读组合状态寄存器 |
 | MSR PSR,R0 | 写组合状态寄存器 |
 
-
 ### 寻址方式
 - 立即数寻址
 - 寄存器寻址
@@ -47,6 +46,12 @@
 - 多寄存器寻址
 - 相对寻址
 - 堆栈寻址
+
+### ARM指令
+- B：(Branch) 跳转
+- BL：(Branch with Link)跳转前先把返回地址保存在LR寄存器中
+- BX：(Branch and eXchange)根据跳转地址的BIT0切换为ARM状态或者Thumb状态（0:ARM状态，1:Thumb状态）
+- BLX：(Branch with link and eXchange)
 
 ### 中断FIQ & IRQ
 IRQ模式下，中断处理程序需要自己保存R8到R12这几个额寄存器，退出中断处理时需要自己恢复这几个寄存器，退出中断处理时需要自己恢复这几个寄存器，而FIQ模式由于这几个寄存器都有back寄存器（fiq_R8）,模式切换时CPU自动保存这些值到back寄存器，退出FIQ模式时自动恢复，所以这个过程FIQ比IRQ快。FIQ比IRQ有更高的优先级，如果FIQ和IRQ同时产生，那么FIQ先处理。
