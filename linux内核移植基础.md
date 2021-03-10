@@ -46,16 +46,20 @@
 - nfs:网络文件系统
 
 ### 编译原理
-- xxx.c->编译(xxx.s)->汇编(xxx.o)->连接(链接多个.o文件，一般只能编译品台运行)->生成二进制文件(objjdump)
+- xxx.c->编译(xxx.s)->汇编(xxx.o)->连接(链接多个.o文件，一般只能编译品台运行)->生成二进制文件(objdump)
 - ld：.o文件的链接命令
 - .lds:链接脚本文件
 
 ### makefile
+- 执行要求:比较文件(目标文件和依赖文件)时间来判断是否需要执行命令
+- 直接运行make，默认会去生成第一个目标
+- .PHONY:clean 可以定义假想目标，防止目标刚好已经有存在的文件（这里是clean文件）了而不去执行
 - 格式
 ```makefile
 目标:依赖
 	命令
 ```
+- 在“命令”前添加“@”符号可以在make的时候不打印命令
 - 伪目标:不是真正的目标，可以用.PHONY:xxx声明
 - 自动化变量:
 ```
@@ -69,6 +73,35 @@ $^:所有的依赖
 %.c:所有当前目录下的.c文件
 ```
 - makefile中用":="符号表示等于,"="会有交叉传递的概念
+
+- makefile中的一些常用内置函数
+```
+foreach:
+names := a b c d
+files := $(foreach n,$(names),$(n).o)
+$(files)的值是a.o b.o c.o d.o
+```
+
+```
+filter:
+C = a b c d/
+D = $(filter %/,$(C));从$(C)中取出符合%/的值
+E = $(filter-out %/,$(C));从$(E)中取出不符合%/的值
+$(D)的值是d/，$(E)的值是a b c
+```
+
+```
+wildcard:
+files = $(wildcard,*.c)
+$(files)的值等于当前目录下所有的.c文件，并且是以空格分割的字符串
+```
+
+```
+patsubst:
+files = a.c b.c c.c d.S
+dep_files = $(patsubst,%.c,%.o,$(files))
+$(dep_files)的值是a.o b.o c.o d.S
+```
 
 ### 同步通讯SPI
 - 缺点:通讯距离很短，一般只在同一块板子上使用。因为距离一长时钟信号和数据信号有相位差
