@@ -59,6 +59,8 @@
 - BL：(Branch with Link)跳转前先把返回地址保存在LR寄存器中
 - BX：(Branch and eXchange)根据跳转地址的BIT0切换为ARM状态或者Thumb状态（0:ARM状态，1:Thumb状态）
 - BLX：(Branch with link and eXchange)
+- !:表示是否改变寄存器的值,ldmfd sp!,{r0-r12}:最后会改变sp值
+- ^:在目标寄存器中有PC时，会同时将spsr写入到cpsr，一般用于异常模式返回。ldmfd sp!,{R0-R12,PC}^
 
 ### 中断FIQ & IRQ
 IRQ模式下，中断处理程序需要自己保存R8到R12这几个额寄存器，退出中断处理时需要自己恢复这几个寄存器，退出中断处理时需要自己恢复这几个寄存器，而FIQ模式由于这几个寄存器都有back寄存器（fiq_R8）,模式切换时CPU自动保存这些值到back寄存器，退出FIQ模式时自动恢复，所以这个过程FIQ比IRQ快。FIQ比IRQ有更高的优先级，如果FIQ和IRQ同时产生，那么FIQ先处理。
@@ -112,3 +114,4 @@ IRQ模式下，中断处理程序需要自己保存R8到R12这几个额寄存器
 |---------------|--------------------|----------|
 
 - cortexA7产生中断/异常，CPU会强制进入那个异常模式，然后程序状态寄存器CPSR会被保存到那个异常模式下的SPSR寄存器，最后跳转到异常处理程序入口
+- svc异常：使用指令``` svc #val ```会触发一个svc异常，在linux中可以用来用户态进入内核态的方法，比如open,read,write等函数
