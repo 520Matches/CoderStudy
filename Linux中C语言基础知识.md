@@ -2,6 +2,10 @@
 
 - float比较
 - 预处理#errror
+- L,U,F
+> U:unsigned
+> L:long/double
+> F:float
 - #ASSERT
 - strcpy和memcpy的区别
 - 指针相关
