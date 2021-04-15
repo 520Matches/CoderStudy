@@ -142,14 +142,42 @@ bool add(int a,int b, int *c)
 - 自旋锁和信号量在互斥使用时需要注意哪些?
 > 使用自旋锁的进程不能睡眠，使用信号量的进程可以睡眠。
 - 原子操作(atomic)
+```C
+typedef stuct {
+	int counter;
+}atomic_t;
+```
 > ldrex和strex是独占访问指令
 > armv6架构以下原子操作是关中断来实现，armv6架构及以上的原子操作是使用strex和ldrex两条指令来不断的检查是否被抢占，如果被抢占则从新执行一遍
+- preempt(抢占功能)
 - spinlock(自旋锁)的实现？
+```C
+typedef struct{
+	union {
+		u32 slock;
+		struct __raw_tickets {
+			u16 next;
+			u16 owner;
+		}
+	}
+}
+```
 > 对于单核CPU，spinlock是通过禁止抢占来实现的。
 > 对于SMP系统（有多个CPU的系统），spinlock里面有u16类型的两个变量，分别是owner和next。
 > > 先将spinlock结构体中的next变量+1,不管能不能获得锁
 > > 如果next和owner相等，则完成加锁，否则就使用wfe（wait for event）指令来进行休眠，解锁的时候就是把owner+1，这样next==owner了,下一个让next+1的进程就可以获得锁
 > > 如果只用1个变量来实现，那么无法实现排队功能，就是当第一个进程解锁以后，后面的进程就开始抢占，不知道谁会抢到
+- semaphore(信号量)的实现
+```C
+struct semaphore {
+	raw_spinlock_t   lock       ;//信号量实现需要使用spinlock
+	unsigned int     count      ;//允许多少线程使用
+	struct list_head wait_list  ;存储等待该信号量的线程
+}
+```
+> 在获取semaphore的时候会判断count是否为0，如果大于0则获取成功，如果等于0则调用down函数进入休眠
+> down函数实现：先使用current获取当前task,然后把当前task放入wait_list中，然后把task状态设置成非RUNNING状态，再不断的判断是否获得信号量，直到获得成功跳出循环为止。
+> up函数的实现：判断wait_list中是否有等待线程，如果有则直接取出第一个等待的线程来获取该信号量并唤醒该线程，如果没有则让count++。
 - insmod 一个驱动模块，会执行模块中的哪个函数？rmmod呢？这两个函数在设计上要注意哪些？遇到过卸载驱动出现异常没？
 > insmod调用init函数，rmmod调用exit函数。这两个函数在设计时要注意什么？卸载模块时曾出现卸载失败的情形，原因是存在进程正在使用模块，
 - linux内核里面，内存申请有哪几个函数，各自的区别？
@@ -159,6 +187,7 @@ bool add(int a,int b, int *c)
 > FIQ(Fast Interrupt Request)：指快速中断模式。
 > IRQ可以被FIQ所中断，但FIQ不能被IRQ所中断，在处理FIQ时必须要关闭中断。
 > FIQ的优先级比IRQ高。
+> FIQ模式有写寄存器自己单独有，所以保存现场的时候可以少保存一些寄存器，所以速度比较快
 - 内核函数mmap的实现原理，机制？
 - wifi中的SSID、BSSID、ESSID、的区别
 > SSID: Service SetIDentifier WLAN的名称
