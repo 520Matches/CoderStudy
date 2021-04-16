@@ -178,6 +178,17 @@ struct semaphore {
 > 在获取semaphore的时候会判断count是否为0，如果大于0则获取成功，如果等于0则调用down函数进入休眠
 > down函数实现：先使用current获取当前task,然后把当前task放入wait_list中，然后把task状态设置成非RUNNING状态，再不断的判断是否获得信号量，直到获得成功跳出循环为止。
 > up函数的实现：判断wait_list中是否有等待线程，如果有则直接取出第一个等待的线程来获取该信号量并唤醒该线程，如果没有则让count++。
+- mutex(互斥量)的实现
+```C
+struct muttex {
+	atomic_t         count     ;//count等于1或者等于0，count=1表示unlocked，count=0表示lock
+	spinlock_t       wait_lock ;//mutex的实现需要spinlock
+	struct list_head wait_list ;//等待mutex的进程放到这里
+}
+```
+> mutex_lock函数的实现:先调用__mutex_fastpath_lock,如果成功则直接获得mutex,如果失败则调用__mutex_lock_slowpath，__mutex_lock_slowpath函数调用__mutex_lock_common函数
+> > __mutex_lock_common先调用preempt_disable来禁止抢占，然后获取mutex里的spinlock锁，然后判断一下count是否等于1，如果是1就直接获取mutex了，
+> > 如果不是则往下执行，把当前线程放入wait_list中，进入for循环，在for循环里面判断count的值，如果为1则刚好自己获得mutex再跳出循环，如果不为1，则把count设置成-1再把当前进程设置成非RUNNING状态并发起调度，直到获取到mutex为止才跳出循环，跳出循环以后把当前线程设置为RUNNING，然后再把当前线程从wait_list里面删掉，最后开启抢占
 - insmod 一个驱动模块，会执行模块中的哪个函数？rmmod呢？这两个函数在设计上要注意哪些？遇到过卸载驱动出现异常没？
 > insmod调用init函数，rmmod调用exit函数。这两个函数在设计时要注意什么？卸载模块时曾出现卸载失败的情形，原因是存在进程正在使用模块，
 - linux内核里面，内存申请有哪几个函数，各自的区别？
