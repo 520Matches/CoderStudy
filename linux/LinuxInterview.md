@@ -23,4 +23,6 @@ debug /sys/kernel/debug debugfs debugfs 0 0
 - 什么是OOM？
 > 当系统内存不够的时候，会产生OOM（out of memory），OOM Killer会计算出需要杀到的进程，被系统杀掉。
 - 什么是OOP？
-> OOP错误一般都是内存错误（越界访问，访问已经被释放的内存，重复释内存，内存泄漏，栈溢出）。和应用程序的segmentation fault（段错误）差不多。
+> OOP错误一般都是内存错误（越界访问，访问已经被释放的内存，重复释内存，内存泄漏，栈溢出）。和应用程序的segmentation fault（段错误）差不多。可以使用KASAN（Kernel Address SANtizer）来检查。
+- 触发OOPS的机制?
+> 当处理器在内核空间中访问一个非法的指针时，因为虚拟地址到物理地址的映射关系没有建立，会触发一个缺页中断，在缺页中断中地址是非法的，内核无法确定地为该地址建立映射关系，所以内核触发了一个OOPS错误。
