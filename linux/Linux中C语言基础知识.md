@@ -1,6 +1,9 @@
 ## C语言基础点
 
 - float比较
+- assert断言的使用
+> 避免在断言中使用改变环境的语句，例如：i++这种。
+- malloc(0)的返回值.可以用main malloc来查看，也可以实际写代码来验证.
 - 预处理#errror
 - L,U,F
 > U:unsigned
